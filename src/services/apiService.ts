@@ -5,6 +5,17 @@ export const fetchRoomsService = async () => {
   return response;
 };
 
+export const fetchRoomBySlugService = async (slug : any) => {
+  const response = await apiClient.get(`/rooms/${slug}`);
+  return response;
+};
+
+export const fetchHistoryReservationsService = async () => {
+  const response = await apiClient.get(`/history-reservation`);
+  return response;
+};
+
+
 export const registerService = async (body: any) => {
   const response = await apiClient.post(`/register`, body);
   return response;

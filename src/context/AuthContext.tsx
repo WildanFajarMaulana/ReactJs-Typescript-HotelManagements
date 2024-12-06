@@ -1,28 +1,32 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Tipe data untuk AuthContext
-type AuthContextType = {
+interface AuthContextProps {
   user: any;
   login: (userData: any) => void;
   logout: () => void;
-};
+}
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-// Menyediakan context ke seluruh aplikasi
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<any>(null);
 
-  // Fungsi login untuk menyimpan data user ke state dan localStorage
+  useEffect(() => {
+    // Ambil data user dari localStorage saat pertama kali aplikasi dimuat
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const login = (userData: any) => {
     setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData)); // Simpan ke localStorage
+    localStorage.setItem("user", JSON.stringify(userData)); // Simpan user ke localStorage
   };
 
-  // Fungsi logout untuk menghapus data user dari state dan localStorage
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user");
+    localStorage.removeItem("user"); // Hapus user dari localStorage
   };
 
   return (
@@ -32,8 +36,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-// Hook untuk menggunakan context
-export const useAuth = (): AuthContextType => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
