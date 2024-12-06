@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { fetchRoomsService } from "../services/apiService";
 import { BASE_URL_STORAGE, formatCurrency } from "../utils/utils";
 import { Link } from "react-router-dom";
+import { Room } from "../types/type";
 
 const HotelPage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [rooms, setRooms] = useState<any[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState<boolean>(false); // State untuk loading
 
   useEffect(() => {

@@ -1,15 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { fetchRoomBySlugService } from "../services/apiService";
+import {
+  fetchHistoryReservationsService,
+  fetchRoomBySlugService,
+} from "../services/apiService";
 import { BASE_URL_STORAGE, formatCurrency } from "../utils/utils";
+import { Reservation, Room } from "../types/type";
+import { useAuth } from "../context/AuthContext";
 
 const DetailPage = () => {
-  const { slug } = useParams(); // Mendapatkan slug dari URL
-  const [room, setRoom] = useState<any>(null);
+  const { user } = useAuth();
+  const { slug } = useParams<{ slug: string }>(); // Mendapatkan slug dari URL
+  const [room, setRoom] = useState<Room | null>(null); // Menambahkan tipe Room
   const [loading, setLoading] = useState(true); // State untuk loading
-  const [error, setError] = useState(""); // State untuk error handling
+  const [error, setError] = useState<string>(""); // State untuk error handling
   const navigate = useNavigate(); // Untuk redirect halaman
 
+  const [reservations, setReservations] = useState<Reservation[]>([]); // Menambahkan tipe untuk reservasi
+  const [canBook, setCanBook] = useState(true); // Default bisa pesan
+
+  useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        const response = await fetchHistoryReservationsService();
+        setReservations(response.data.reservations);
+        checkCanBook(response.data.reservations);
+      } catch (error) {
+        console.error("Error fetching reservations:", error);
+      }
+    };
+
+    if (user?.data?.user.id) {
+      fetchReservations();
+    }
+  }, [user?.data?.user.id]);
+
+  // Mengecek apakah pemesanan pertama sudah selesai
+  const checkCanBook = (reservations: Reservation[]) => {
+    const activeReservation = reservations.find(
+      (reservation) => reservation.reservation_status !== "completed" && reservation.reservation_status !== "canceled"
+    );
+    if (activeReservation) {
+      setCanBook(false); // Tidak bisa pesan jika ada pesanan yang belum selesai
+    } else {
+      setCanBook(true); // Bisa pesan jika tidak ada pesanan yang sedang berlangsung
+    }
+  };
+  console.log(canBook);
   useEffect(() => {
     const loadRoomDetails = async () => {
       try {
@@ -97,7 +134,9 @@ const DetailPage = () => {
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex items-center justify-center text-center text-white">
           <div>
-            <h1 className="text-5xl font-bold">{room.room_type} / {room.room_name}</h1>
+            <h1 className="text-5xl font-bold">
+              {room.room_type} / {room.room_name}
+            </h1>
             <p className="text-xl mt-4">
               {formatCurrency(room.price_per_night)} / night
             </p>
@@ -121,15 +160,19 @@ const DetailPage = () => {
           </div>
           <div className="flex justify-center items-center">
             <button
-              disabled={room.status === "booked"}
+              disabled={!(canBook && room.status !== "booked")}
               onClick={handleBookNow}
-              className={`px-8 py-4 text-white rounded-lg shadow-lg text-lg font-bold transition-all ${
-                room.status === "booked"
-                  ? "bg-gray-400 cursor-not-allowed" // Tombol disabled dengan warna abu-abu
-                  : "bg-orange-600 hover:bg-orange-800" // Tombol aktif dengan warna oranye
+              className={`px-8 py-4 rounded-lg font-semibold text-white focus:outline-none focus:ring-2 focus:ring-orange-400 ${
+                !(canBook && room.status !== "booked")
+                  ? "bg-orange-300 cursor-not-allowed"
+                  : "bg-orange-500 hover:bg-orange-600"
               }`}
             >
-              {room.status === "booked" ? "Room Booked" : "Book Now"}
+              {canBook
+                ? room.status === "booked"
+                  ? "Room Booked"
+                  : "Book Now"
+                : "You have an active reservation. Complete it first."}
             </button>
           </div>
         </div>
@@ -142,7 +185,7 @@ const DetailPage = () => {
         </h2>
         {room.room_facilitys && room.room_facilitys.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {room.room_facilitys.map((facility: any) => (
+            {room.room_facilitys.map((facility) => (
               <div
                 key={facility.id}
                 className="bg-gray-100 p-6 rounded-lg shadow-md text-center"
@@ -167,14 +210,16 @@ const DetailPage = () => {
         </h2>
         {room.reviews && room.reviews.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {room.reviews.map((testimonial: any) => (
+            {room.reviews.map((testimonial) => (
               <div
                 key={testimonial.id}
                 className="bg-white p-6 shadow-md rounded-lg"
               >
-                <p className="italic text-gray-700">"{testimonial.content}"</p>
+                <p className="italic text-gray-700">
+                  "{testimonial.review_text}"
+                </p>
                 <p className="mt-4 font-semibold text-gray-800">
-                  - {testimonial.guest_name}
+                  - {testimonial.User.name}
                 </p>
               </div>
             ))}

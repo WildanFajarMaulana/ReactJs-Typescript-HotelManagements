@@ -25,3 +25,9 @@ export const loginService = async (body: any) => {
   const response = await apiClient.post(`/login`, body);
   return response;
 };
+
+
+export const cancelReservationService = async (reservation_id: number) => {
+  const response = await apiClient.post(`/cancel-reservation/${reservation_id}`);
+  return response;
+};
