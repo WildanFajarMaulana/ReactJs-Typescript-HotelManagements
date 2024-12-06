@@ -21,7 +21,6 @@ const Layout = () => {
   }, []);
 
   const isLoggedIn = !!user; // Pastikan user tidak null atau undefined
-  console.log(isLoggedIn);
 
   return (
     <>

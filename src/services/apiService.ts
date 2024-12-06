@@ -31,3 +31,8 @@ export const cancelReservationService = async (reservation_id: number) => {
   const response = await apiClient.post(`/cancel-reservation/${reservation_id}`);
   return response;
 };
+
+export const createRatingService = async (reservation_id: number, body : any) => {
+  const response = await apiClient.post(`/create-rating/${reservation_id}`, body);
+  return response;
+};

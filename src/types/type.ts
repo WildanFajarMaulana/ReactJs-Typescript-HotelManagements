@@ -11,12 +11,13 @@ export type User = {
   
   export type Review = {
     id: number;
+    reservation_id : number;
     user_id: number;
     room_id: number;
     amount: number;
     rating: number;
     review_text: string;
-    User: User;
+    user: User;
   };
   
   export type Reservation = {

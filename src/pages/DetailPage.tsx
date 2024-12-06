@@ -38,7 +38,9 @@ const DetailPage = () => {
   // Mengecek apakah pemesanan pertama sudah selesai
   const checkCanBook = (reservations: Reservation[]) => {
     const activeReservation = reservations.find(
-      (reservation) => reservation.reservation_status !== "completed" && reservation.reservation_status !== "canceled"
+      (reservation) =>
+        reservation.reservation_status !== "completed" &&
+        reservation.reservation_status !== "canceled"
     );
     if (activeReservation) {
       setCanBook(false); // Tidak bisa pesan jika ada pesanan yang belum selesai
@@ -52,6 +54,7 @@ const DetailPage = () => {
       try {
         setLoading(true);
         const response = await fetchRoomBySlugService(slug);
+        console.log(response.data);
         setRoom(response.data.data);
         setError("");
       } catch (err) {
@@ -205,7 +208,7 @@ const DetailPage = () => {
 
       {/* Testimonials Section */}
       <section className="bg-gray-50 py-12 px-6 sm:px-12 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-semibold mb-8 text-center text-gray-800">
+        <h2 className="text-4xl font-bold mb-8 text-center text-gray-800">
           What Our Guests Say
         </h2>
         {room.reviews && room.reviews.length > 0 ? (
@@ -213,13 +216,35 @@ const DetailPage = () => {
             {room.reviews.map((testimonial) => (
               <div
                 key={testimonial.id}
-                className="bg-white p-6 shadow-md rounded-lg"
+                className="bg-white p-6 shadow-md rounded-lg transition-transform hover:scale-105"
               >
+                {/* Rating Section */}
+                <div className="flex items-center mb-4">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <svg
+                      key={index}
+                      className={`w-5 h-5 ${
+                        index < testimonial.rating
+                          ? "text-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.09c.969 0 1.371 1.24.588 1.81l-3.316 2.41a1 1 0 00-.364 1.118l1.286 3.97c.3.921-.755 1.688-1.54 1.118L10 13.348l-3.316 2.41c-.784.57-1.838-.197-1.539-1.118l1.286-3.97a1 1 0 00-.364-1.118l-3.316-2.41c-.784-.57-.38-1.81.588-1.81h4.09a1 1 0 00.95-.69l1.286-3.97z" />
+                    </svg>
+                  ))}
+                </div>
+
+                {/* Review Text */}
                 <p className="italic text-gray-700">
                   "{testimonial.review_text}"
                 </p>
+
+                {/* User Information */}
                 <p className="mt-4 font-semibold text-gray-800">
-                  - {testimonial.User.name}
+                  - {testimonial.user.name}
                 </p>
               </div>
             ))}
