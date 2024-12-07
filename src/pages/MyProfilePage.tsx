@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import {
   cancelReservationService,
   createRatingService,
@@ -9,6 +8,7 @@ import {
 } from "../services/apiService";
 import { Reservation, User } from "../types/type";
 import { toast } from "react-toastify";
+import { BASE_URL_STORAGE, formatCurrency } from "../utils/utils";
 
 const MyProfilePage = () => {
   const { user } = useAuth();
@@ -29,7 +29,7 @@ const MyProfilePage = () => {
       setLoading(true);
       try {
         const response = await fetchHistoryReservationsService();
-        console.log(response.data.reservations)
+        console.log(response.data.reservations);
         setReservations(response.data.reservations);
       } catch (error) {
         console.error("Error fetching reservations:", error);
@@ -107,7 +107,7 @@ const MyProfilePage = () => {
   };
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-3xl w-full">
+      <div className="bg-white shadow-lg rounded-lg p-8 max-w-3xl w-full my-28">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-semibold text-gray-800">My Profile</h1>
           <p className="text-gray-600">Manage your personal information</p>
@@ -164,17 +164,17 @@ const MyProfilePage = () => {
                   className="flex justify-between items-center border-b py-3"
                 >
                   <div>
-                  <p className="text-lg text-gray-800 font-medium">
-                        {reservation.reservation_code}
-                      </p>
+                    <p className="text-lg text-gray-800 font-medium">
+                      {reservation.reservation_code}
+                    </p>
                     <Link to={`/room/${reservation?.room?.room_slug}`}>
                       <p className="text-lg text-gray-800 font-medium">
                         Room : {reservation.room?.room_name || "Unknown Room"}
                       </p>
                     </Link>
                     <p className="text-lg text-gray-800 font-medium">
-                        {reservation.reservation_status}
-                      </p>
+                      {reservation.reservation_status}
+                    </p>
                     <p className="text-sm text-gray-600">
                       {new Date(reservation.check_in_date).toLocaleDateString()}{" "}
                       -{" "}
@@ -210,7 +210,7 @@ const MyProfilePage = () => {
 
       {isModalOpen && selectedReservation && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg max-w-lg w-full shadow-lg">
+          <div className="bg-white p-8 rounded-lg max-w-lg w-full shadow-lg my-28 overflow-y-auto max-h-[90vh]">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Reservation Detail
             </h2>
@@ -236,12 +236,28 @@ const MyProfilePage = () => {
                 ).toLocaleDateString()}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>Total Price:</strong> ${selectedReservation.total_price}
+                <strong>Total Price:</strong> {formatCurrency(selectedReservation.total_price)}
               </p>
               <p className="text-sm text-gray-600">
                 <strong>Status:</strong>{" "}
                 {selectedReservation.reservation_status}
               </p>
+
+              {/* Proof Section */}
+              {selectedReservation.payment.proof && (
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    Payment Proof
+                  </h3>
+                  <div className="flex items-center justify-start gap-4">
+                    <img
+                      src={`${BASE_URL_STORAGE}/${selectedReservation.payment.proof}`}
+                      alt="Proof of Payment"
+                      className="w-96 h-96 object-cover rounded-lg shadow"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {selectedReservation.reservation_status === "completed" &&

@@ -30,8 +30,17 @@ export type User = {
     reservation_status: string;
     reservation_code: string;
     room: Room;
+    payment: Payment
   };
   
+  export type Payment = {
+    reservation_id: number;
+    payment_method: string;
+    amount: number;
+    payment_status: boolean;
+    proof: string;
+  };
+
   export type RoomFacilitys = {
     id: number;
     room_id: number;

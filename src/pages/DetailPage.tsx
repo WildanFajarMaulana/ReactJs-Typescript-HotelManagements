@@ -7,6 +7,7 @@ import {
 import { BASE_URL_STORAGE, formatCurrency } from "../utils/utils";
 import { Reservation, Room } from "../types/type";
 import { useAuth } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 const DetailPage = () => {
   const { user } = useAuth();
@@ -18,6 +19,10 @@ const DetailPage = () => {
 
   const [reservations, setReservations] = useState<Reservation[]>([]); // Menambahkan tipe untuk reservasi
   const [canBook, setCanBook] = useState(true); // Default bisa pesan
+
+  const roomProcess: any = localStorage.getItem("reservation")
+    ? JSON.parse(localStorage.getItem("reservation") as string)
+    : null;
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -70,16 +75,21 @@ const DetailPage = () => {
   }, [slug]);
 
   // Fungsi untuk menangani tombol "Book Now"
-  const handleBookNow = () => {
+  const handleBookNow = (room: Room) => {
+    if (roomProcess && roomProcess.room_id === room.id && roomProcess.room_slug === room.room_slug) {
+      toast.warning(
+        "You already have a pending reservation for this room. Please complete it first!"
+      );
+      return;
+    }
+
     if (room) {
       // Simpan data kamar ke localStorage
       localStorage.setItem(
         "reservation",
         JSON.stringify({
-          id: room.id,
-          room_type: room.room_type,
-          price: room.price_per_night,
-          capacity: room.capacity,
+          room_id: room.id,
+          room_slug: room.room_slug
         })
       );
       // Redirect ke halaman reservation
@@ -164,7 +174,7 @@ const DetailPage = () => {
           <div className="flex justify-center items-center">
             <button
               disabled={!(canBook && room.status !== "booked")}
-              onClick={handleBookNow}
+              onClick={() => handleBookNow(room)}
               className={`px-8 py-4 rounded-lg font-semibold text-white focus:outline-none focus:ring-2 focus:ring-orange-400 ${
                 !(canBook && room.status !== "booked")
                   ? "bg-orange-300 cursor-not-allowed"

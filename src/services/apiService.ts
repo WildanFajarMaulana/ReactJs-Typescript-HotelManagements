@@ -36,3 +36,14 @@ export const createRatingService = async (reservation_id: number, body : any) =>
   const response = await apiClient.post(`/create-rating/${reservation_id}`, body);
   return response;
 };
+
+
+export const createReservationService = async ( body : any) => {
+  const headersOpt = {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  }
+  const response = await apiClient.post(`/create-reservation`, body, headersOpt);
+  return response;
+};
