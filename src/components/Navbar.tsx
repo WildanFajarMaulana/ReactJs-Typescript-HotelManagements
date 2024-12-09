@@ -46,7 +46,7 @@ const Navbar = ({ isScrolled }: any) => {
           href="/"
           className="text-4xl font-extrabold text-orange-600 hover:text-orange-800 transition-all"
         >
-          HotelLux
+          HotelDer
         </a>
         <ul className="flex space-x-8 text-lg font-medium">
           <li>

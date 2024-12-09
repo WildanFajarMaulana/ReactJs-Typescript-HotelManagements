@@ -10,6 +10,7 @@ const registerSchema = z
   .object({
     name: z.string().min(2, { message: "Name must be at least 2 characters" }),
     email: z.string().email({ message: "Invalid email address" }),
+    phone: z.string().min(2, { message: "phone must be at least 11 characters" }),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" }),
@@ -94,6 +95,26 @@ const RegisterPage: React.FC = () => {
               <p className="text-red-500 text-sm mt-1">
                 {errors.email.message}
               </p>
+            )}
+          </div>
+          <div>
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-600"
+            >
+              Phone number
+            </label>
+            <input
+              type="text"
+              id="phone"
+              {...register("phone")}
+              className={`w-full mt-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 ${
+                errors.phone ? "border-red-500" : "border-gray-300"
+              }`}
+              placeholder="Enter your phone number"
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
             )}
           </div>
           <div>

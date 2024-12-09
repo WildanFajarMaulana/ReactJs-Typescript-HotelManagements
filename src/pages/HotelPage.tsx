@@ -89,7 +89,7 @@ const HotelPage = () => {
                   <h3 className="text-2xl font-semibold text-gray-800 mb-2">
                     {room.room_type} / {room.room_name}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-4">{room.description}</p>
+                  <p className="text-gray-600 text-sm mb-4">{room.status}</p>
                   <p className="text-xl font-semibold text-gray-800 mb-4">
                     {formatCurrency(room.price_per_night)} / night
                   </p>

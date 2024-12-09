@@ -249,12 +249,12 @@ const DetailPage = () => {
 
                 {/* Review Text */}
                 <p className="italic text-gray-700">
-                  "{testimonial.review_text}"
+                  "{testimonial?.review_text}"
                 </p>
 
                 {/* User Information */}
                 <p className="mt-4 font-semibold text-gray-800">
-                  - {testimonial.user.name}
+                  - {testimonial?.user.name}
                 </p>
               </div>
             ))}
