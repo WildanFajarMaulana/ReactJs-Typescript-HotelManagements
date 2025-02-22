@@ -269,7 +269,7 @@ const ReservationPage: React.FC = () => {
                   htmlFor="proof"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Upload Payment Proof (optional)
+                  Upload Payment Proof (optional) // NO REKENING 2321321232 (HOTEL DER)
                 </label>
                 <input
                   type="file"
