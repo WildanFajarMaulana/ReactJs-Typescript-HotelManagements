@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   fetchHistoryReservationsService,
@@ -17,7 +17,7 @@ const DetailPage = () => {
   const [error, setError] = useState<string>(""); // State untuk error handling
   const navigate = useNavigate(); // Untuk redirect halaman
 
-  const [reservations, setReservations] = useState<Reservation[]>([]); // Menambahkan tipe untuk reservasi
+  // const [reservations, setReservations] = useState<Reservation[]>([]); // Menambahkan tipe untuk reservasi
   const [canBook, setCanBook] = useState(true); // Default bisa pesan
 
   const roomProcess: any = localStorage.getItem("reservation")
@@ -28,7 +28,7 @@ const DetailPage = () => {
     const fetchReservations = async () => {
       try {
         const response = await fetchHistoryReservationsService();
-        setReservations(response.data.reservations);
+        // setReservations(response.data.reservations);
         checkCanBook(response.data.reservations);
       } catch (error) {
         console.error("Error fetching reservations:", error);
